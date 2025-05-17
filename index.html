@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スクロールバーテストサイト</title>
+    <style>
+        /* Robotoフォントのインポート */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        /* CSS変数によるテーマ定義 */
+        :root {
+            --bg-color-light: #f4f4f8;
+            --text-color-light: #333333;
+            --primary-color-light: #007bff;
+            --scrollbar-track-light: #e0e0e0;
+            --scrollbar-thumb-light: #007bff;
+
+            --bg-color-dark: #2c2c2c;
+            --text-color-dark: #f0f0f0;
+            --primary-color-dark: #00bcd4;
+            --scrollbar-track-dark: #555555;
+            --scrollbar-thumb-dark: #00bcd4;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* ライトテーマ（デフォルト） */
+        body.light-theme {
+            background-color: var(--bg-color-light);
+            color: var(--text-color-light);
+        }
+        body.light-theme input[type="range"]::-webkit-slider-runnable-track {
+            background: var(--scrollbar-track-light);
+        }
+        body.light-theme input[type="range"]::-webkit-slider-thumb {
+            background: var(--scrollbar-thumb-light);
+        }
+        body.light-theme input[type="range"]::-moz-range-track {
+            background: var(--scrollbar-track-light);
+        }
+        body.light-theme input[type="range"]::-moz-range-thumb {
+            background: var(--scrollbar-thumb-light);
+        }
+        body.light-theme input[type="range"]::-ms-track {
+            background: var(--scrollbar-track-light);
+        }
+        body.light-theme input[type="range"]::-ms-thumb {
+            background: var(--scrollbar-thumb-light);
+        }
+        body.light-theme #valueDisplay {
+            color: var(--primary-color-light);
+        }
+
+
+        /* ダークテーマ */
+        body.dark-theme {
+            background-color: var(--bg-color-dark);
+            color: var(--text-color-dark);
+        }
+        body.dark-theme input[type="range"]::-webkit-slider-runnable-track {
+            background: var(--scrollbar-track-dark);
+        }
+        body.dark-theme input[type="range"]::-webkit-slider-thumb {
+            background: var(--scrollbar-thumb-dark);
+        }
+        body.dark-theme input[type="range"]::-moz-range-track {
+            background: var(--scrollbar-track-dark);
+        }
+        body.dark-theme input[type="range"]::-moz-range-thumb {
+            background: var(--scrollbar-thumb-dark);
+        }
+        body.dark-theme input[type="range"]::-ms-track {
+            background: var(--scrollbar-track-dark);
+        }
+        body.dark-theme input[type="range"]::-ms-thumb {
+            background: var(--scrollbar-thumb-dark);
+        }
+        body.dark-theme #valueDisplay {
+            color: var(--primary-color-dark);
+        }
+
+
+        .container {
+            text-align: center;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            /* シャドウの色もテーマに合わせて変更したい場合は、CSS変数を追加 */
+        }
+        body.light-theme .container {
+            background-color: #fff; /* ライトテーマ時のコンテナ背景 */
+             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        body.dark-theme .container {
+            background-color: #383838; /* ダークテーマ時のコンテナ背景 */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+
+        h1 {
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+
+        /* スライダー（スクロールバー代用）のスタイル */
+        input[type="range"] {
+            -webkit-appearance: none; /* Safari/Chromeでデフォルトスタイルを無効化 */
+            appearance: none;
+            width: 80%;
+            max-width: 400px;
+            height: 10px;
+            border-radius: 5px;
+            outline: none;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+
+        /* WebKit (Chrome, Safari, Edge) */
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            /* background is set by theme class */
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            /* background is set by theme class */
+            cursor: pointer;
+            margin-top: -5px; /* 上に5pxずらしてトラックの中央に */
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        /* Firefox */
+        input[type="range"]::-moz-range-track {
+            width: 100%;
+            height: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            /* background is set by theme class */
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            /* background is set by theme class */
+            cursor: pointer;
+            border: none; /* Firefoxのデフォルトボーダーを削除 */
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        /* IE / Edge (旧) */
+        input[type="range"]::-ms-track {
+            width: 100%;
+            height: 10px;
+            cursor: pointer;
+            background: transparent; /* IEは背景を透明にし、下で色を付ける */
+            border-color: transparent;
+            color: transparent;
+            /* track color is set by theme class */
+        }
+        input[type="range"]::-ms-fill-lower { /* トラックの左側（値の小さい方） */
+            border-radius: 5px;
+            /* thumb color is set by theme class */
+        }
+        input[type="range"]::-ms-fill-upper { /* トラックの右側（値の大きい方） */
+            border-radius: 5px;
+            /* track color is set by theme class */
+        }
+        input[type="range"]::-ms-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            /* background is set by theme class */
+            cursor: pointer;
+            margin-top: 0px; /* IEでは不要な場合が多い */
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        body.light-theme input[type="range"]::-ms-fill-lower {
+            background: var(--scrollbar-thumb-light);
+        }
+        body.light-theme input[type="range"]::-ms-fill-upper {
+            background: var(--scrollbar-track-light);
+        }
+        body.dark-theme input[type="range"]::-ms-fill-lower {
+            background: var(--scrollbar-thumb-dark);
+        }
+        body.dark-theme input[type="range"]::-ms-fill-upper {
+            background: var(--scrollbar-track-dark);
+        }
+
+
+        #valueDisplay {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>スクロールバーテスト</h1>
+        <p>下のスライダーで0から200の範囲で値を選択できます。</p>
+
+        <input type="range" id="myScrollbar" min="0" max="200" value="100">
+
+        <div id="valueDisplay">100</div>
+    </div>
+
+    <script>
+        const body = document.body;
+        const myScrollbar = document.getElementById('myScrollbar');
+        const valueDisplay = document.getElementById('valueDisplay');
+
+        // テーマを適用する関数
+        function applyTheme(isDark) {
+            if (isDark) {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+            } else {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+            }
+        }
+
+        // 初期テーマ設定
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        applyTheme(prefersDarkScheme.matches); // 初期読み込み時に現在の設定を適用
+
+        // OSのテーマ変更をリッスン
+        prefersDarkScheme.addEventListener('change', (event) => {
+            applyTheme(event.matches);
+        });
+
+        // スライダーの値が変更されたときに表示を更新
+        myScrollbar.addEventListener('input', function() {
+            valueDisplay.textContent = this.value;
+        });
+
+        // 初期値を表示
+        valueDisplay.textContent = myScrollbar.value;
+
+    </script>
+</body>
+</html>
