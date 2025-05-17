@@ -96,15 +96,14 @@
             text-align: center;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            /* シャドウの色もテーマに合わせて変更したい場合は、CSS変数を追加 */
+            opacity: 0; /* 初期状態は非表示 (アニメーション用) */
         }
         body.light-theme .container {
-            background-color: #fff; /* ライトテーマ時のコンテナ背景 */
-             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background-color: #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         body.dark-theme .container {
-            background-color: #383838; /* ダークテーマ時のコンテナ背景 */
+            background-color: #383838;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
@@ -112,15 +111,17 @@
         h1 {
             margin-bottom: 20px;
             font-weight: 700;
+            opacity: 0; /* 初期状態は非表示 (アニメーション用) */
         }
 
         p {
             margin-bottom: 20px;
+            opacity: 0; /* 初期状態は非表示 (アニメーション用) */
         }
 
         /* スライダー（スクロールバー代用）のスタイル */
         input[type="range"] {
-            -webkit-appearance: none; /* Safari/Chromeでデフォルトスタイルを無効化 */
+            -webkit-appearance: none;
             appearance: none;
             width: 80%;
             max-width: 400px;
@@ -129,6 +130,7 @@
             outline: none;
             margin: 20px 0;
             cursor: pointer;
+            opacity: 0; /* 初期状態は非表示 (アニメーション用) */
         }
 
         /* WebKit (Chrome, Safari, Edge) */
@@ -137,18 +139,15 @@
             height: 10px;
             cursor: pointer;
             border-radius: 5px;
-            /* background is set by theme class */
         }
-
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             height: 20px;
             width: 20px;
             border-radius: 50%;
-            /* background is set by theme class */
             cursor: pointer;
-            margin-top: -5px; /* 上に5pxずらしてトラックの中央に */
+            margin-top: -5px;
             box-shadow: 0 0 5px rgba(0,0,0,0.2);
         }
 
@@ -158,16 +157,13 @@
             height: 10px;
             cursor: pointer;
             border-radius: 5px;
-            /* background is set by theme class */
         }
-
         input[type="range"]::-moz-range-thumb {
             height: 20px;
             width: 20px;
             border-radius: 50%;
-            /* background is set by theme class */
             cursor: pointer;
-            border: none; /* Firefoxのデフォルトボーダーを削除 */
+            border: none;
             box-shadow: 0 0 5px rgba(0,0,0,0.2);
         }
 
@@ -176,26 +172,22 @@
             width: 100%;
             height: 10px;
             cursor: pointer;
-            background: transparent; /* IEは背景を透明にし、下で色を付ける */
+            background: transparent;
             border-color: transparent;
             color: transparent;
-            /* track color is set by theme class */
         }
-        input[type="range"]::-ms-fill-lower { /* トラックの左側（値の小さい方） */
+        input[type="range"]::-ms-fill-lower {
             border-radius: 5px;
-            /* thumb color is set by theme class */
         }
-        input[type="range"]::-ms-fill-upper { /* トラックの右側（値の大きい方） */
+        input[type="range"]::-ms-fill-upper {
             border-radius: 5px;
-            /* track color is set by theme class */
         }
         input[type="range"]::-ms-thumb {
             height: 20px;
             width: 20px;
             border-radius: 50%;
-            /* background is set by theme class */
             cursor: pointer;
-            margin-top: 0px; /* IEでは不要な場合が多い */
+            margin-top: 0px;
             box-shadow: 0 0 5px rgba(0,0,0,0.2);
         }
         body.light-theme input[type="range"]::-ms-fill-lower {
@@ -216,6 +208,17 @@
             font-size: 1.5em;
             font-weight: bold;
             margin-top: 10px;
+            opacity: 0; /* 初期状態は非表示 (アニメーション用) */
+        }
+
+        /* フェードインアニメーション */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
     </style>
@@ -249,7 +252,7 @@
 
         // 初期テーマ設定
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-        applyTheme(prefersDarkScheme.matches); // 初期読み込み時に現在の設定を適用
+        applyTheme(prefersDarkScheme.matches);
 
         // OSのテーマ変更をリッスン
         prefersDarkScheme.addEventListener('change', (event) => {
@@ -261,8 +264,28 @@
             valueDisplay.textContent = this.value;
         });
 
-        // 初期値を表示
-        valueDisplay.textContent = myScrollbar.value;
+        // フェードインアニメーションの適用
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.container');
+            const h1 = container.querySelector('h1');
+            const p = container.querySelector('p');
+            const slider = container.querySelector('#myScrollbar');
+            const valDisplay = container.querySelector('#valueDisplay');
+
+            function applyFadeInAnimation(element, duration, delay) {
+                if (element) {
+                    element.style.animation = `fadeIn ${duration}s ease-out ${delay}s forwards`;
+                }
+            }
+
+            applyFadeInAnimation(container, 0.5, 0.1);
+            applyFadeInAnimation(h1, 0.5, 0.3);
+            applyFadeInAnimation(p, 0.5, 0.5);
+            applyFadeInAnimation(slider, 0.5, 0.7);
+            applyFadeInAnimation(valDisplay, 0.5, 0.9);
+
+             if (valDisplay) valDisplay.textContent = myScrollbar.value; // HTMLで初期値が設定されているので、厳密には不要
+        });
 
     </script>
 </body>
